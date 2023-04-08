@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.study.springboot.dao.AddrDao">
+	<!-- DB 업데이트 용 -->
+	<select id="getAddr" resultType="com.study.springboot.dto.AddrTempDto">
+
+		<![CDATA[ select ADDRDONG, ADDRSTREET from cafe_list where lat < 37.4252155 ]]>		
+	</select>
+	<update id="updateLocDataDong">
+		update cafe_list set lon = #{param1}, lat = #{param2} where addrdong = #{param3} 
+	</update>
+	<update id="updateLocDataStreet">
+		update cafe_list set lon = #{param1}, lat = #{param2} where addrstreet = #{param3} 
+	</update>
+	<delete id="deleteClosedDong">
+		delete cafe_list where addrdong = #{param1}
+	</delete>
+	<delete id="deleteClosedStreet">
+		delete cafe_list where addrstreet = #{param1}
+	</delete>
+	<select id="getName" resultType="String">
+		select name from cafe_list
+	</select>
+	<update id="addRandomScore">
+		update cafe_list set score=#{param1} where name=#{param2}
+	</update>
+	<insert id="updateMenu">
+		insert into cafe_status(cno, menu, price, kind) values(#{param1}, #{param2}, #{param3}, #{param4})
+	</insert>
+	
+	
+	<!-- 주변 정보 불러오기 -->
+	<select id="getAroundCafe" resultType="com.study.springboot.dto.AddrDto">
+		select * from (select * from cafe_list where lat between #{param1} and #{param2}) where lon between #{param3} and #{param4} order by score desc
+	</select>
+	
+	<!-- 해당 카페 메뉴 불러오기 -->
+	<select id="getMenu" resultType="com.study.springboot.dto.MenuDto">
+		select * from cafe_status where cno=#{param1} order by kind
+	</select>
+</mapper>
